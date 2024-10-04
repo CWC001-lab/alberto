@@ -1,27 +1,39 @@
 import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 import { useCart } from '../data/CartContext';
-import productsData from '../Navbar/data'; // Importing the products data
+import productsData from '../data/data'; // Importing the products data
 import { FaCartPlus, FaHeart } from 'react-icons/fa';
+import "./Products.css"; // Import the custom CSS file
 
 function Products() {
-  const { cartItems, addToCart, addToWishlist } = useCart();
-  const [clickCounts, setClickCounts] = useState({});
+  const { addToCart, addToWishlist } = useCart();
+  const [showModal, setShowModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const handleAddToCart = (product) => {
-    const currentCount = clickCounts[product.id] || 0;
+  const handleShow = (product) => {
+    setSelectedProduct(product);
+    setShowModal(true);
+  };
 
-    if (currentCount === 1) {
-      alert(`${product.name} is already in your cart.`);
-    } else {
-      addToCart(product);
-      setClickCounts({ ...clickCounts, [product.id]: 1 });
+  const handleClose = () => {
+    setShowModal(false);
+    setSelectedProduct(null);
+  };
+
+  const handleAddToCart = () => {
+    if (selectedProduct) {
+      addToCart(selectedProduct);
+      handleClose();
     }
   };
 
-  const handleAddToWishlist = (product) => {
-    addToWishlist(product);
+  const handleAddToWishlist = () => {
+    if (selectedProduct) {
+      addToWishlist(selectedProduct);
+      handleClose();
+    }
   };
 
   return (
@@ -34,15 +46,39 @@ function Products() {
             <Card.Text>
               Price: ${product.price.toFixed(2)}
             </Card.Text>
-            <Button variant="primary" onClick={() => handleAddToCart(product)}>
-              <FaCartPlus />
-            </Button>
-            <Button variant="outline-danger" onClick={() => handleAddToWishlist(product)}>
-              <FaHeart />
+            <Button variant="primary" onClick={() => handleShow(product)}>
+              View More
             </Button>
           </Card.Body>
         </Card>
       ))}
+
+      {/* Modal for displaying product details */}
+      <Modal show={showModal} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>{selectedProduct?.name}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="modal-body">
+          <div className="image-container">
+            <img src={selectedProduct?.image} alt={selectedProduct?.name} style={{ width: '100%' }} />
+          </div>
+          <div className="info-container">
+            <h5>Price: ${selectedProduct?.price.toFixed(2)}</h5>
+            <p>Description: {selectedProduct?.description || 'No description available.'}</p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleAddToCart}>
+            <FaCartPlus /> Add to Cart
+          </Button>
+          <Button variant="outline-danger" onClick={handleAddToWishlist}>
+            <FaHeart /> Add to Wishlist
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

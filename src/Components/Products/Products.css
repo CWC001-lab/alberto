@@ -1,0 +1,36 @@
+.custom-modal {
+  max-width: 60%; /* Reduce width by 20% */
+  max-height: 80vh; /* Adjust height as needed */
+}
+
+.custom-modal .modal-content {
+  height: auto; /* Allow height to adjust based on content */
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column; /* Default to column for mobile */
+}
+
+.modal-body .image-container {
+  flex: 1; /* Allow the image container to grow */
+  display: flex;
+  justify-content: center; /* Center the image */
+}
+
+.modal-body .info-container {
+  flex: 1; /* Allow the info container to grow */
+  display: flex;
+  flex-direction: column; /* Stack price and description vertically */
+  justify-content: center; /* Center content vertically */
+}
+
+@media (min-width: 768px) {
+  .modal-body {
+    flex-direction: row; /* Change to row for tablets and laptops */
+  }
+
+  .modal-body .image-container {
+    margin-right: 20px; /* Add some space between image and info */
+  }
+}
